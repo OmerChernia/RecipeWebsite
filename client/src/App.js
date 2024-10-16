@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import api from './services/api'; // Ensure correct path
+import './App.css'; // Ensure this import exists
+import api from './services/api'; // Adjust the path if necessary
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Banner from './components/Banner';
 import CategoryFilter from './components/CategoryFilter';
@@ -12,10 +13,10 @@ import EditRecipe from './components/EditRecipe';
 import FloatingButtons from './components/FloatingButtons';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Set to false initially
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [categories, setCategories] = useState([]); // Add this state
-  const [selectedCategory, setSelectedCategory] = useState(null); // Add this state
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     checkAuthStatus();
@@ -78,7 +79,7 @@ function App() {
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
             isAdmin={isAdmin}
-            refreshCategories={refreshCategories} // Pass the refresh function
+            refreshCategories={refreshCategories}
           />
         </div>
         <div className="main-content">
