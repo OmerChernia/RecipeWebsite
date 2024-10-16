@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
+import { IMAGE_BASE_URL } from '../config'; // Import IMAGE_BASE_URL
 
 const RecipeDetails = ({ isAdmin }) => {
   const [recipe, setRecipe] = useState(null);
@@ -48,7 +49,14 @@ const RecipeDetails = ({ isAdmin }) => {
         )}
       </div>
       <div className="recipe-image">
-        <img src={`http://localhost:5001${recipe.image}`} alt={recipe.title} />
+        <img 
+          src={`${IMAGE_BASE_URL}${recipe.image}`} 
+          alt={recipe.title} 
+          onError={(e) => {
+            e.target.onerror = null; 
+            e.target.src = 'https://via.placeholder.com/150?text=No+Image';
+          }}
+        />
       </div>
     </div>
   );

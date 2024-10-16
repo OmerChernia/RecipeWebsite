@@ -23,7 +23,8 @@ router.get('/', async (req, res) => {
     const recipes = await Recipe.find().populate('category');
     res.json(recipes);
   } catch (err) {
-    res.status(500).send('Server Error');
+    console.error('Error fetching recipes:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 

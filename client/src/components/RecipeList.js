@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL, IMAGE_BASE_URL } from '../config';
 
 const RecipeList = ({ selectedCategory }) => {
   const [recipes, setRecipes] = useState([]);
@@ -11,7 +12,9 @@ const RecipeList = ({ selectedCategory }) => {
 
   const fetchRecipes = async () => {
     try {
-      const res = await axios.get('/api/recipes');
+      console.log('Fetching recipes from:', `${API_BASE_URL}/recipes`);
+      const res = await api.get('/recipes');
+      console.log('Recipes fetched:', res.data);
       setRecipes(res.data);
     } catch (err) {
       console.error('Error fetching recipes:', err);
@@ -29,7 +32,7 @@ const RecipeList = ({ selectedCategory }) => {
           <Link to={`/recipe/${recipe._id}`} key={recipe._id} className="recipe-card">
             {recipe.image && (
               <img 
-                src={`http://localhost:5001${recipe.image}`} 
+                src={`${IMAGE_BASE_URL}${recipe.image}`} 
                 alt={recipe.title} 
                 onError={(e) => {
                   e.target.onerror = null; 

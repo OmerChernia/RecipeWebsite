@@ -9,7 +9,12 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['https://fascinating-seahorse-c7f0dd.netlify.app', 'http://localhost:3000', 'https://pickleswithpickles.oa.r.appspot.com']
+    origin: [
+        'https://fascinating-seahorse-c7f0dd.netlify.app', 
+        'http://localhost:3000', 
+        'https://pickleswithpickles.oa.r.appspot.com'
+    ],
+    credentials: true
 }));
 app.use(express.json());
 
@@ -20,13 +25,15 @@ console.log('Files in public directory:', fs.readdirSync(publicPath));
 
 app.use(express.static(publicPath));
 
+// **Serve the uploads directory as static**
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/recipes', require('./routes/recipes'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/auth', require('./routes/auth'));
 
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
+// Catchall handler to serve React's index.html
 app.get('*', (req, res) => {
   const indexPath = path.join(publicPath, 'index.html');
   console.log('Serving index.html from:', indexPath);
@@ -39,7 +46,7 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 8081;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))

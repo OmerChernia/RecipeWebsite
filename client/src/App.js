@@ -11,6 +11,7 @@ import RecipeDetails from './components/RecipeDetails';
 import EditRecipe from './components/EditRecipe';
 import './App.css';
 import FloatingButtons from './components/FloatingButtons';
+import api from './services/api';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Set to false initially
@@ -21,7 +22,7 @@ function App() {
   useEffect(() => {
     checkAuthStatus();
     // Fetch categories when the component mounts
-    axios.get('/api/categories')
+    api.get('/categories')
       .then(response => setCategories(response.data))
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
@@ -29,9 +30,7 @@ function App() {
   const checkAuthStatus = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('/api/auth/me', {
-        headers: { 'x-auth-token': token }
-      })
+      api.get('/auth/me')
         .then(res => {
           setIsAuthenticated(true);
           setIsAdmin(res.data.isAdmin);

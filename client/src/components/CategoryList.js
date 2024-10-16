@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -11,23 +11,22 @@ const CategoryList = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get('/api/categories');
+      const res = await api.get('/categories');
+      console.log('Categories fetched:', res.data);
       setCategories(res.data);
     } catch (err) {
-      console.error('Error fetching categories:', err);
+      console.error('Error fetching categories:', err.response ? err.response.data : err.message);
     }
   };
 
   const addCategory = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/categories', { name: newCategory }, {
-        headers: { 'x-auth-token': localStorage.getItem('token') }
-      });
+      await api.post('/categories', { name: newCategory });
       setNewCategory('');
       fetchCategories();
     } catch (err) {
-      console.error('Error adding category:', err);
+      console.error('Error adding category:', err.response ? err.response.data : err.message);
     }
   };
 
