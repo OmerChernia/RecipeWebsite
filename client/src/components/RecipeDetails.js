@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { IMAGE_BASE_URL } from '../config'; // Import IMAGE_BASE_URL
-import api from '../services/api'; // Import the configured API instance
+import api from '../services/api'; // Use the configured API instance
 
 const RecipeDetails = ({ isAdmin }) => {
   const [recipe, setRecipe] = useState(null);
