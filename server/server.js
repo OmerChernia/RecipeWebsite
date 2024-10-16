@@ -2,44 +2,48 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['fascinating-seahorse-c7f0dd.netlify.app', 'http://localhost:3000']
-  }));
+    origin: ['https://fascinating-seahorse-c7f0dd.netlify.app', 'http://localhost:3000', 'https://pickleswithpickles.oa.r.appspot.com']
+}));
 app.use(express.json());
 
-// Serve static files from the uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve static files from the React app
+const publicPath = path.join(__dirname, 'public');
+console.log('Public path:', publicPath);
+console.log('Files in public directory:', fs.readdirSync(publicPath));
 
-const username = encodeURIComponent(process.env.MONGO_USERNAME);
-const password = encodeURIComponent(process.env.MONGO_PASSWORD);
-const cluster = process.env.MONGO_CLUSTER;
-const dbname = process.env.MONGO_DBNAME;
-
-const uri = `mongodb+srv://${username}:${password}@${cluster}/${dbname}?retryWrites=true&w=majority`;
-
-mongoose.connect(uri, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true,
-  useCreateIndex: true
-})
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
+app.use(express.static(publicPath));
 
 // Routes
 app.use('/api/recipes', require('./routes/recipes'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/auth', require('./routes/auth'));
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Backend is connected!' });
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  const indexPath = path.join(publicPath, 'index.html');
+  console.log('Serving index.html from:', indexPath);
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    console.error('index.html not found at:', indexPath);
+    res.status(404).send('index.html not found');
+  }
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  });

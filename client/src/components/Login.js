@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config'; // Update this import
 
 const Login = ({ setIsAuthenticated, handleLogin }) => {
   const [username, setUsername] = useState('');
@@ -10,7 +11,7 @@ const Login = ({ setIsAuthenticated, handleLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/auth/login', { username, password });
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, { username, password });
       handleLogin(response.data.token);
       navigate('/');
     } catch (error) {
