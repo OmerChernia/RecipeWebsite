@@ -48,6 +48,7 @@ app.get('*', (req, res) => {
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
 
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => {
