@@ -7,11 +7,13 @@ const api = axios.create({
 
 console.log('API Base URL:', API_BASE_URL);
 
+// Request interceptor to log requests
 api.interceptors.request.use(request => {
-  console.log('Starting Request', request)
-  return request
-})
+  console.log('Starting Request', request);
+  return request;
+});
 
+// Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -29,12 +31,15 @@ api.interceptors.response.use(
   }
 );
 
-// Add an interceptor to include the token in the headers
+// Interceptor to include the token in the headers
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
+      console.log('Authorization header set:', config.headers['Authorization']);
+    } else {
+      console.log('No token found in localStorage');
     }
     return config;
   },
@@ -46,5 +51,3 @@ api.interceptors.request.use(
 export default api;
 
 export const getRecipes = () => api.get('/recipes');
-export const getCategories = () => api.get('/categories');
-// ... other API calls
