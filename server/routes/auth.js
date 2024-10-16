@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/User'); // Ensure correct path
 const auth = require('../middleware/auth');
 
 // Register user
@@ -15,7 +15,8 @@ router.post('/register', async (req, res) => {
 
     user = new User({
       username: req.body.username,
-      password: req.body.password
+      password: req.body.password,
+      isAdmin: req.body.isAdmin || false, // Ensure isAdmin field
     });
 
     const salt = await bcrypt.genSalt(10);
@@ -30,12 +31,12 @@ router.post('/register', async (req, res) => {
       }
     };
 
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
   } catch (err) {
-    console.error(err.message);
+    console.error('Registration error:', err.message);
     res.status(500).send('Server error');
   }
 });
@@ -43,7 +44,6 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-
   try {
     let user = await User.findOne({ username });
     if (!user) {
@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: 3600 },
+      { expiresIn: '1h' },
       (err, token) => {
         if (err) throw err;
         res.json({ token });

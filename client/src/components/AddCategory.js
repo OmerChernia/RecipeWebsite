@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api'; // Use the configured API instance
 import { useNavigate } from 'react-router-dom';
 
 const AddCategory = () => {
@@ -9,13 +9,11 @@ const AddCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/categories', { name }, {
-        headers: { 'x-auth-token': localStorage.getItem('token') }
-      });
+      await api.post('/categories', { name });
       alert('Category added successfully!');
       navigate('/');
     } catch (err) {
-      console.error(err);
+      console.error('Error adding category:', err);
       alert('Error adding category');
     }
   };

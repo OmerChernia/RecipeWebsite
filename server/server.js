@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 const { Storage } = require('@google-cloud/storage'); // Import GCS
 require('dotenv').config();
 
@@ -40,28 +39,27 @@ const storage = new Storage({
 
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME);
 
-// Serve static files from the React app
-const publicPath = path.join(__dirname, 'public');
-console.log('Public path:', publicPath);
-console.log('Files in public directory:', fs.readdirSync(publicPath));
-
-app.use(express.static(publicPath));
-
-// Serve the uploads directory as static
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Routes
-app.use('/api/recipes', require('./routes/recipes')(bucket));
-app.use('/api/categories', require('./routes/categories')); // Add this line
-app.use('/api/auth', require('./routes/auth')); // Ensure auth routes are included
-
-const PORT = process.env.PORT || 8081;
-app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
-
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
+.then(() => console.log('MongoDB Connected'))
 .catch(err => console.error('MongoDB connection error:', err));
+
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/recipes', require('./routes/recipes')(bucket));
+app.use('/api/categories', require('./routes/categories'));
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// The "catchall" handler: for any request that doesn't match one above, send back React's index.html.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+});
+
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

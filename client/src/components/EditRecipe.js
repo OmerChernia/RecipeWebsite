@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api'; // Use the configured Axios instance
+import api from '../services/api'; // Use the configured API instance
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EditRecipe = () => {

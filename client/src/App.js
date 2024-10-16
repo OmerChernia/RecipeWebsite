@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import axios from 'axios';
-import Banner from './components/Banner'; // Import the new Banner component
-import CategoryFilter from './components/CategoryFilter'; // Import this
+import api from './services/api'; // Ensure correct path
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Banner from './components/Banner';
+import CategoryFilter from './components/CategoryFilter';
 import RecipeList from './components/RecipeList';
 import Login from './components/Login';
 import AddRecipe from './components/AddRecipe';
 import AddCategory from './components/AddCategory';
 import RecipeDetails from './components/RecipeDetails';
 import EditRecipe from './components/EditRecipe';
-import './App.css';
 import FloatingButtons from './components/FloatingButtons';
-import api from './services/api';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Set to false initially
@@ -63,20 +61,11 @@ function App() {
     setSelectedCategory(categoryId);
   };
 
-  useEffect(() => {
-    // Check if the user is an admin when the component mounts
-    const token = localStorage.getItem('token');
-    if (token) {
-      // You might want to create an API endpoint to verify if the user is an admin
-      axios.get('/api/users/me', { headers: { 'x-auth-token': token } })
-        .then(response => {
-          setIsAdmin(response.data.isAdmin);
-        })
-        .catch(error => {
-          console.error('Error checking admin status:', error);
-        });
-    }
-  }, []);
+  const refreshCategories = () => {
+    api.get('/categories')
+      .then(response => setCategories(response.data))
+      .catch(error => console.error('Error fetching categories:', error));
+  };
 
   return (
     <Router>
@@ -89,6 +78,7 @@ function App() {
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
             isAdmin={isAdmin}
+            refreshCategories={refreshCategories} // Pass the refresh function
           />
         </div>
         <div className="main-content">
