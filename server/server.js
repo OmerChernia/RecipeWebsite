@@ -7,7 +7,9 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['fascinating-seahorse-c7f0dd.netlify.app', 'http://localhost:3000']
+  }));
 app.use(express.json());
 
 // Serve static files from the uploads directory
@@ -39,5 +41,5 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend is connected!' });
 });
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
