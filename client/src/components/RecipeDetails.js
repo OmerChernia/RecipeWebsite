@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { IMAGE_BASE_URL } from '../config'; // Import IMAGE_BASE_URL
+import api from '../services/api'; // Import the configured API instance
 
 const RecipeDetails = ({ isAdmin }) => {
   const [recipe, setRecipe] = useState(null);
@@ -10,7 +10,7 @@ const RecipeDetails = ({ isAdmin }) => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const res = await axios.get(`/api/recipes/${id}`);
+        const res = await api.get(`/recipes/${id}`);
         setRecipe(res.data);
       } catch (err) {
         console.error('Error fetching recipe:', err);
@@ -50,7 +50,7 @@ const RecipeDetails = ({ isAdmin }) => {
       </div>
       <div className="recipe-image">
         <img 
-          src={`${IMAGE_BASE_URL}${recipe.image}`} 
+          src={recipe.image} 
           alt={recipe.title} 
           onError={(e) => {
             e.target.onerror = null; 

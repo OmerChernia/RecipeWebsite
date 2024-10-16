@@ -20,3 +20,5 @@ handlers:
 env_variables:
   MONGO_URI: "mongodb+srv://omer12899:aa1234@recepieweb.tq7l6.mongodb.net/RecepieWeb?retryWrites=true&w=majority"
   JWT_SECRET: "7b52196084261a422618418793b06e6fb10a0c4a1811e71a4a56ea1bb6409e37f6e94525a582286b794394c0fd385215b33de04c4f80a2c6507f7e982fa31d8d"
+  GOOGLE_APPLICATION_CREDENTIALS: "/path/to/service-account-key.json" # Update this path accordingly
+  GCS_BUCKET_NAME: "ecipe-images-bucket" # Replace with your bucket name
