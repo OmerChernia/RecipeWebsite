@@ -3,22 +3,20 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const { Storage } = require('@google-cloud/storage');
+const { Storage } = require('@google-cloud/storage'); // Import GCS
 require('dotenv').config();
 
 const app = express();
 
-// Define allowed origins
+// Middleware
 const allowedOrigins = [
   'https://fascinating-seahorse-c7f0dd.netlify.app',
   'http://localhost:3000',
   'https://pickleswithpickles.oa.r.appspot.com'
 ];
 
-// CORS options
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
@@ -36,8 +34,8 @@ app.use(express.json());
 
 // Initialize Google Cloud Storage
 const storage = new Storage({
-  projectId: process.env.GOOGLE_CLOUD_PROJECT_ID, // Ensure this is set correctly
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+  projectId: 'pickleswithpickles', // Replace with your actual project ID
+  // No need to specify credentials; default service account will be used
 });
 
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME);
@@ -54,6 +52,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/recipes', require('./routes/recipes')(bucket));
+app.use('/api/categories', require('./routes/categories')); // Add this line
 app.use('/api/auth', require('./routes/auth')); // Ensure auth routes are included
 
 const PORT = process.env.PORT || 8081;

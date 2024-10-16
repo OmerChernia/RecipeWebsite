@@ -1,63 +1,44 @@
 const express = require('express');
 const router = express.Router();
 const Category = require('../models/Category');
-const auth = require('../middleware/auth');
+const authMiddleware = require('../middleware/auth'); // If categories are protected
 
-// Get all categories
+// @route   GET /api/categories
+// @desc    Get all categories
+// @access  Public (Change to Private if needed)
 router.get('/', async (req, res) => {
   try {
-    const categories = await Category.find();
-    console.log('Categories found:', categories);  // Add this line
+    const categories = await Category.find().sort({ name: 1 });
     res.json(categories);
   } catch (err) {
-    console.error('Error in GET /api/categories:', err);  // Modify this line
-    res.status(500).json({ message: 'Server Error', error: err.message });
+    console.error('Error fetching categories:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 
-// Add new category (admin only)
-router.post('/', auth, async (req, res) => {
-  try {
-    const newCategory = new Category(req.body);
-    const category = await newCategory.save();
-    res.json(category);
-  } catch (err) {
-    res.status(500).send('Server Error');
-  }
-});
+// @route   POST /api/categories
+// @desc    Create a new category (Admin Only)
+// @access  Private
+router.post('/', authMiddleware, async (req, res) => {
+  const { name, description } = req.body;
 
-// Delete a category
-router.delete('/:id', auth, async (req, res) => {
+  if (!name) {
+    return res.status(400).json({ msg: 'Category name is required' });
+  }
+
   try {
-    const category = await Category.findById(req.params.id);
-    if (!category) {
-      return res.status(404).json({ msg: 'Category not found' });
+    let category = await Category.findOne({ name });
+    if (category) {
+      return res.status(400).json({ msg: 'Category already exists' });
     }
-    await category.remove();
-    res.json({ msg: 'Category removed' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
 
-// Update a category
-router.put('/:id', auth, async (req, res) => {
-  try {
-    const { name } = req.body;
-    const category = await Category.findById(req.params.id);
-    if (!category) {
-      return res.status(404).json({ msg: 'Category not found' });
-    }
-    category.name = name;
+    category = new Category({ name, description });
     await category.save();
-    res.json(category);
+    res.status(201).json(category);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Error creating category:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-
-// Add update and delete routes here
 
 module.exports = router;

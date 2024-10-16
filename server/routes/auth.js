@@ -79,14 +79,17 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Get current user
+// Get authenticated user's data
 router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
+    const user = await User.findById(req.user.id).select('-password'); // Exclude password
+    if (!user) {
+      return res.status(400).json({ msg: 'User not found' });
+    }
+    res.json({ isAdmin: user.isAdmin });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    console.error('Error fetching user data:', err.message);
+    res.status(500).send('Server error');
   }
 });
 

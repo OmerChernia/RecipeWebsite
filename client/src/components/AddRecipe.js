@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api'; // Use the configured API instance
 import { useNavigate } from 'react-router-dom';
 
 const AddRecipe = () => {
@@ -19,8 +19,12 @@ const AddRecipe = () => {
   }, []);
 
   const fetchCategories = async () => {
-    const res = await axios.get('/api/categories');
-    setCategories(res.data);
+    try {
+      const res = await api.get('/categories');
+      setCategories(res.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -36,10 +40,9 @@ const AddRecipe = () => {
     if (image) formData.append('image', image);
 
     try {
-      const response = await axios.post('/api/recipes', formData, {
+      const response = await api.post('/recipes', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'x-auth-token': localStorage.getItem('token')
         }
       });
       alert('Recipe added successfully!');

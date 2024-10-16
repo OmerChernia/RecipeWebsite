@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import api from '../services/api'; // Use the configured API instance
 
 const EditRecipe = () => {
   const [title, setTitle] = useState('');
@@ -11,40 +11,28 @@ const EditRecipe = () => {
   const [servings, setServings] = useState('');
   const [category, setCategory] = useState('');
   const [image, setImage] = useState(null);
-  const [categories, setCategories] = useState([]);
-
-  const { id } = useParams();
+  const [recipe, setRecipe] = useState(null);
   const navigate = useNavigate();
-
-  const fetchRecipe = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/recipes/${id}`);
-      const recipe = res.data;
-      setTitle(recipe.title);
-      setDescription(recipe.description);
-      setIngredients(recipe.ingredients.join('\n')); // Join array with newlines
-      setInstructions(recipe.instructions.join('\n')); // Join array with newlines
-      setCookingTime(recipe.cookingTime);
-      setServings(recipe.servings);
-      setCategory(recipe.category._id);
-    } catch (err) {
-      console.error('Error fetching recipe:', err);
-    }
-  }, [id]);
+  const { id } = useParams();
 
   useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const res = await api.get(`/recipes/${id}`);
+        setRecipe(res.data);
+        setTitle(res.data.title);
+        setDescription(res.data.description);
+        setIngredients(res.data.ingredients.join('\n'));
+        setInstructions(res.data.instructions.join('\n'));
+        setCookingTime(res.data.cookingTime);
+        setServings(res.data.servings);
+        setCategory(res.data.category._id);
+      } catch (err) {
+        console.error('Error fetching recipe:', err);
+      }
+    };
     fetchRecipe();
-    fetchCategories();
-  }, [fetchRecipe]);
-
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get('/api/categories');
-      setCategories(res.data);
-    } catch (err) {
-      console.error('Error fetching categories:', err);
-    }
-  };
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,33 +47,28 @@ const EditRecipe = () => {
     if (image) formData.append('image', image);
 
     try {
-      await axios.put(`/api/recipes/${id}`, formData, {
+      await api.put(`/recipes/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'x-auth-token': localStorage.getItem('token')
         }
       });
-      alert('המתכון עודכן בהצלחה!');
+      alert('Recipe updated successfully!');
       navigate(`/recipe/${id}`);
     } catch (err) {
       console.error(err);
-      alert('שגיאה בעדכון המתכון');
+      alert('Error updating recipe');
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm('האם אתה בטוח שברצונך למחוק מתכון זה?')) {
+    if (window.confirm('Are you sure you want to delete this recipe?')) {
       try {
-        await axios.delete(`/api/recipes/${id}`, {
-          headers: {
-            'x-auth-token': localStorage.getItem('token')
-          }
-        });
-        alert('המתכון נמחק בהצלחה!');
+        await api.delete(`/recipes/${id}`);
+        alert('Recipe deleted successfully!');
         navigate('/');
       } catch (err) {
         console.error(err);
-        alert('שגיאה במחיקת המתכון');
+        alert('Error deleting recipe');
       }
     }
   };
