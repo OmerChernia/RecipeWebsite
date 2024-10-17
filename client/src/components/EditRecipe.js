@@ -17,14 +17,6 @@ const EditRecipe = () => {
     category: '',
     image: null,
   });
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [ingredients, setIngredients] = useState('');
-  const [instructions, setInstructions] = useState('');
-  const [cookingTime, setCookingTime] = useState('');
-  const [servings, setServings] = useState('');
-  const [category, setCategory] = useState('');
-  const [image, setImage] = useState(null);
 
   useEffect(() => {
     // Fetch the recipe data
@@ -100,19 +92,19 @@ const EditRecipe = () => {
     <div className="edit-recipe-container">
       <form onSubmit={handleSubmit} className="add-recipe-form">
         <h2>עריכת מתכון</h2>
-        <input type="text" placeholder="כותרת" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <textarea placeholder="תיאור" value={description} onChange={(e) => setDescription(e.target.value)} required />
-        <textarea placeholder="מצרכים (אחד בכל שורה)" value={ingredients} onChange={(e) => setIngredients(e.target.value)} required />
-        <textarea placeholder="הוראות הכנה (אחת בכל שורה)" value={instructions} onChange={(e) => setInstructions(e.target.value)} required />
-        <input type="number" placeholder="זמן בישול (בדקות)" value={cookingTime} onChange={(e) => setCookingTime(e.target.value)} required />
-        <input type="number" placeholder="כמות הגשות למנה" value={servings} onChange={(e) => setServings(e.target.value)} required />
-        <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+        <input type="text" name="title" placeholder="כותרת" value={formData.title} onChange={handleChange} required />
+        <textarea name="description" placeholder="תיאור" value={formData.description} onChange={handleChange} required />
+        <textarea name="ingredients" placeholder="מצרכים (אחד בכל שורה)" value={formData.ingredients} onChange={handleChange} required />
+        <textarea name="instructions" placeholder="הוראות הכנה (אחת בכל שורה)" value={formData.instructions} onChange={handleChange} required />
+        <input type="number" name="cookingTime" placeholder="זמן בישול (בדקות)" value={formData.cookingTime} onChange={handleChange} required />
+        <input type="number" name="servings" placeholder="כמות הגשות למנה" value={formData.servings} onChange={handleChange} required />
+        <select name="category" value={formData.category} onChange={handleChange} required>
           <option value="">בחר קטגוריה</option>
           {categories.map(cat => (
             <option key={cat._id} value={cat._id}>{cat.name}</option>
           ))}
         </select>
-        <input type="file" onChange={(e) => setImage(e.target.files[0])} accept="image/*" />
+        <input type="file" name="image" onChange={handleChange} accept="image/*" />
         <button type="submit">עדכן מתכון</button>
       </form>
     </div>
