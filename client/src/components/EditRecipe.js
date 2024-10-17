@@ -26,11 +26,11 @@ const EditRecipe = () => {
         setFormData({
           title: response.data.title,
           description: response.data.description,
-          ingredients: JSON.stringify(response.data.ingredients),
-          instructions: JSON.stringify(response.data.instructions),
+          ingredients: response.data.ingredients.join('\n'), // Convert array to multi-line string
+          instructions: response.data.instructions.join('\n'), // Convert array to multi-line string
           cookingTime: response.data.cookingTime,
           servings: response.data.servings,
-          category: response.data.category,
+          category: response.data.category._id || response.data.category, // Handle category
           image: response.data.image,
         });
       })
@@ -63,11 +63,11 @@ const EditRecipe = () => {
       const recipeData = new FormData();
       recipeData.append('title', formData.title);
       recipeData.append('description', formData.description);
-      recipeData.append('ingredients', JSON.stringify(formData.ingredients.split('\n')));
-      recipeData.append('instructions', JSON.stringify(formData.instructions.split('\n')));
+      recipeData.append('ingredients', JSON.stringify(formData.ingredients.split('\n'))); // Split by newline
+      recipeData.append('instructions', JSON.stringify(formData.instructions.split('\n'))); // Split by newline
       recipeData.append('cookingTime', formData.cookingTime);
       recipeData.append('servings', formData.servings);
-      recipeData.append('category', formData.category._id || formData.category); // Use _id if it's an object, otherwise use the value directly
+      recipeData.append('category', formData.category._id || formData.category); // Use _id if it's an object
       if (formData.image instanceof File) {
         recipeData.append('image', formData.image);
       }
@@ -85,11 +85,26 @@ const EditRecipe = () => {
     }
   };
 
+  // Handler for deleting the recipe
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this recipe? This action cannot be undone.')) {
+      try {
+        await api.delete(`/recipes/${id}`);
+        alert('Recipe deleted successfully!');
+        navigate('/');
+      } catch (error) {
+        console.error('Error deleting recipe:', error);
+        alert('Failed to delete recipe.');
+      }
+    }
+  };
+
   if (!recipe) {
     return <div>Loading...</div>;
   }
+  
   return (
-    <div className="edit-recipe-container">
+    <div className="edit-recipe-container" dir="rtl">
       <form onSubmit={handleSubmit} className="add-recipe-form">
         <h2>עריכת מתכון</h2>
         <input type="text" name="title" placeholder="כותרת" value={formData.title} onChange={handleChange} required />
@@ -107,6 +122,7 @@ const EditRecipe = () => {
         <input type="file" name="image" onChange={handleChange} accept="image/*" />
         <button type="submit">עדכן מתכון</button>
       </form>
+      <button onClick={handleDelete} className="delete-button">מחק מתכון</button>
     </div>
   );
 };
