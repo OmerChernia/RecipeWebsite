@@ -103,33 +103,30 @@ module.exports = (bucket) => {
           return res.status(500).send('Server Error');
         });
 
-        blobStream.on('finish', () => {
+        blobStream.on('finish', async () => {
           imageUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-          // Proceed to update recipe with imageUrl
-          const updateData = {
-            ...req.body,
-            ingredients: JSON.parse(req.body.ingredients),
-            instructions: JSON.parse(req.body.instructions),
-          };
-          if (imageUrl) {
-            updateData.image = imageUrl;
-          }
-
-          Recipe.findByIdAndUpdate(req.params.id, updateData, { new: true })
-            .then((recipe) => res.json(recipe))
-            .catch((err) => {
-              console.error('Error updating recipe:', err);
-              res.status(500).send('Server Error');
-            });
+          await updateRecipe();
         });
 
         blobStream.end(req.file.buffer);
       } else {
+        await updateRecipe();
+      }
+
+      async function updateRecipe() {
         const updateData = {
-          ...req.body,
+          title: req.body.title,
+          description: req.body.description,
           ingredients: JSON.parse(req.body.ingredients),
           instructions: JSON.parse(req.body.instructions),
+          cookingTime: req.body.cookingTime,
+          servings: req.body.servings,
+          category: req.body.category,
         };
+        if (imageUrl) {
+          updateData.image = imageUrl;
+        }
+
         const recipe = await Recipe.findByIdAndUpdate(req.params.id, updateData, { new: true });
         res.json(recipe);
       }

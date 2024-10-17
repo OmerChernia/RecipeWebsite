@@ -17,6 +17,14 @@ const EditRecipe = () => {
     category: '',
     image: null,
   });
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [ingredients, setIngredients] = useState('');
+  const [instructions, setInstructions] = useState('');
+  const [cookingTime, setCookingTime] = useState('');
+  const [servings, setServings] = useState('');
+  const [category, setCategory] = useState('');
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     // Fetch the recipe data
@@ -60,12 +68,23 @@ const EditRecipe = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedData = {
-        ...formData,
-        ingredients: JSON.parse(formData.ingredients),
-        instructions: JSON.parse(formData.instructions),
-      };
-      const response = await api.put(`/recipes/${id}`, updatedData);
+      const recipeData = new FormData();
+      recipeData.append('title', formData.title);
+      recipeData.append('description', formData.description);
+      recipeData.append('ingredients', JSON.stringify(formData.ingredients.split('\n')));
+      recipeData.append('instructions', JSON.stringify(formData.instructions.split('\n')));
+      recipeData.append('cookingTime', formData.cookingTime);
+      recipeData.append('servings', formData.servings);
+      recipeData.append('category', formData.category._id || formData.category); // Use _id if it's an object, otherwise use the value directly
+      if (formData.image instanceof File) {
+        recipeData.append('image', formData.image);
+      }
+
+      const response = await api.put(`/recipes/${id}`, recipeData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
       alert('Recipe updated successfully!');
       navigate(`/recipe/${response.data._id}`);
     } catch (error) {
@@ -77,76 +96,26 @@ const EditRecipe = () => {
   if (!recipe) {
     return <div>Loading...</div>;
   }
-
   return (
-    <form onSubmit={handleSubmit} className="edit-recipe-form">
-      <h2>Edit Recipe</h2>
-      <input
-        type="text"
-        name="title"
-        placeholder="Title"
-        value={formData.title}
-        onChange={handleChange}
-        required
-      />
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={formData.description}
-        onChange={handleChange}
-        required
-      />
-      <textarea
-        name="ingredients"
-        placeholder="Ingredients (JSON format)"
-        value={formData.ingredients}
-        onChange={handleChange}
-        required
-      />
-      <textarea
-        name="instructions"
-        placeholder="Instructions (JSON format)"
-        value={formData.instructions}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="number"
-        name="cookingTime"
-        placeholder="Cooking Time (minutes)"
-        value={formData.cookingTime}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="number"
-        name="servings"
-        placeholder="Servings"
-        value={formData.servings}
-        onChange={handleChange}
-        required
-      />
-      <select
-        name="category"
-        value={formData.category}
-        onChange={handleChange}
-        required
-      >
-        <option value="">Select Category</option>
-        {categories.map(category => (
-          <option key={category._id} value={category.name}>
-            {category.name}
-          </option>
-        ))}
-      </select>
-      <input
-        type="file"
-        name="image"
-        accept="image/*"
-        onChange={handleChange}
-      />
-      <button type="submit">Update Recipe</button>
-    </form>
+    <div className="edit-recipe-container">
+      <form onSubmit={handleSubmit} className="add-recipe-form">
+        <h2>עריכת מתכון</h2>
+        <input type="text" placeholder="כותרת" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <textarea placeholder="תיאור" value={description} onChange={(e) => setDescription(e.target.value)} required />
+        <textarea placeholder="מצרכים (אחד בכל שורה)" value={ingredients} onChange={(e) => setIngredients(e.target.value)} required />
+        <textarea placeholder="הוראות הכנה (אחת בכל שורה)" value={instructions} onChange={(e) => setInstructions(e.target.value)} required />
+        <input type="number" placeholder="זמן בישול (בדקות)" value={cookingTime} onChange={(e) => setCookingTime(e.target.value)} required />
+        <input type="number" placeholder="כמות הגשות למנה" value={servings} onChange={(e) => setServings(e.target.value)} required />
+        <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+          <option value="">בחר קטגוריה</option>
+          {categories.map(cat => (
+            <option key={cat._id} value={cat._id}>{cat.name}</option>
+          ))}
+        </select>
+        <input type="file" onChange={(e) => setImage(e.target.files[0])} accept="image/*" />
+        <button type="submit">עדכן מתכון</button>
+      </form>
+    </div>
   );
 };
 

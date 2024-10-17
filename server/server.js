@@ -53,13 +53,13 @@ app.use('/api/recipes', require('./routes/recipes')(bucket));
 app.use('/api/categories', require('./routes/categories'));
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 // The "catchall" handler: for any request that doesn't match one above, send back React's index.html.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+  res.sendFile(path.join(__dirname,'../client/build','index.html'));
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
