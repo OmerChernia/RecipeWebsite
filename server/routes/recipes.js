@@ -145,24 +145,29 @@ module.exports = (bucket) => {
       if (!recipe) {
         return res.status(404).send('Recipe not found');
       }
-  
+
       // Delete image from GCS if it exists
       if (recipe.image) {
         // Extract the file name from the image URL
         const imagePath = recipe.image.replace(`https://storage.googleapis.com/${bucket.name}/`, '');
         const file = bucket.file(imagePath);
-        
-        // Delete the file from GCS
-        await file.delete();
-        console.log(`Image ${imagePath} deleted from GCS`);
+
+        // Check if the file exists before attempting to delete
+        const [exists] = await file.exists();
+        if (exists) {
+          await file.delete();
+          console.log(`Image ${imagePath} deleted from GCS`);
+        } else {
+          console.warn(`Image ${imagePath} does not exist in GCS`);
+        }
       }
-  
+
       // Delete the recipe from the database
       await Recipe.findByIdAndDelete(req.params.id);
       res.send('Recipe deleted successfully');
     } catch (err) {
-      console.error('Error deleting recipe:', err);
-      res.status(500).send('Server Error');
+      console.error('Error deleting recipe:', err.message);
+      res.status(500).send(`Server Error: ${err.message}`);
     }
   });
 
