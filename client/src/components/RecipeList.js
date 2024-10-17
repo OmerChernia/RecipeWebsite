@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Link } from 'react-router-dom';
-import { API_BASE_URL, IMAGE_BASE_URL } from '../config';
+import { API_BASE_URL } from '../config';
 
 const RecipeList = ({ selectedCategory }) => {
   const [recipes, setRecipes] = useState([]);
