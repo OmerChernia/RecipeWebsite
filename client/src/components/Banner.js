@@ -15,7 +15,7 @@ const Banner = () => {
           <h1>חמוצים עם חמוצים</h1>
         </Link>
         <div className="banner-separator"></div>
-        <p>״לא גנבנו כלום, אבל זה לא שלנו...</p>
+        <p>״לא גנבנו כלום, אבל זה לא שלנו״</p>
       </div>
     </div>
   );
