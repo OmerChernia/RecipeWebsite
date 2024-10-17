@@ -3,6 +3,7 @@ const Recipe = require('../models/Recipe');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
+const { Storage } = require('@google-cloud/storage');
 
 module.exports = (bucket) => {
   const router = express.Router();
@@ -104,7 +105,8 @@ module.exports = (bucket) => {
         });
 
         blobStream.on('finish', async () => {
-          imageUrl = `https://storage.cloud.google.com/${bucket.name}/${blob.name}`;
+          // Corrected URL
+          imageUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
           await updateRecipe();
         });
 

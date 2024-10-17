@@ -951,21 +951,22 @@ nav a, nav button {
 
 /* Add styles for the delete button */
 .delete-button {
-  padding: 12px;
+  padding: 12px 20px; /* Adjust padding for better sizing */
   background-color: #d32f2f; /* Red color */
   color: white;
   border: none;
-  border-radius: 15px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 1.1em;
+  font-size: 1em;
   font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.1s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   font-family: 'Fredoka', sans-serif;
-  width: 100%;
-  margin-top: 20px;
+  width: 100%; /* Make it the same width as the update button */
+  max-width: 800px; /* Optional: match the container's max-width */
+  margin-top: 20px; /* Space above the button */
 }
 
 .delete-button:hover {
   background-color: #b71c1c; /* Darker red on hover */
-  transform: translateY(-2px);
+  transform: scale(1.02); /* Slightly increase size on hover */
 }
