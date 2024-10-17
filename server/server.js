@@ -48,10 +48,9 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
-const categoriesRoute = require('./routes/categories'); // Import categories routes
-const recipesRoute = require('./routes/recipes'); // Import recipes routes
-app.use('/api/categories', categoriesRoute); // Use categories routes
-app.use('/api/recipes', recipesRoute); // Use recipes routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/recipes', require('./routes/recipes')(bucket));
+app.use('/api/categories', require('./routes/categories'));
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../client/build')));
@@ -59,12 +58,6 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 // The "catchall" handler: for any request that doesn't match one above, send back React's index.html.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname,'../client/build','index.html'));
-});
-
-// Error Handling Middleware (optional but recommended)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
 });
 
 // Start the server
