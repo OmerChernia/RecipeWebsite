@@ -104,7 +104,7 @@ module.exports = (bucket) => {
         });
 
         blobStream.on('finish', async () => {
-          imageUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+          imageUrl = `https://storage.cloud.google.com/${bucket.name}/${blob.name}`;
           await updateRecipe();
         });
 

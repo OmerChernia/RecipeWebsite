@@ -32,7 +32,7 @@ const RecipeList = ({ selectedCategory }) => {
           <Link to={`/recipe/${recipe._id}`} key={recipe._id} className="recipe-card">
             {recipe.image && (
               <img 
-                src={`${IMAGE_BASE_URL}${recipe.image}`} 
+                src={recipe.image} 
                 alt={recipe.title} 
                 onError={(e) => {
                   e.target.onerror = null; 
