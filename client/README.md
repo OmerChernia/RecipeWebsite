@@ -1,70 +1,119 @@
-# Getting Started with Create React App
+# Recipe Management Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Recipe Management Application! This application allows users to create, edit, delete, and view recipes and categories. It is built using a modern web stack with a Node.js backend and a React frontend.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Code References](#code-references)
+- [Contributing](#contributing)
+- [License](#license)
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Recipe Management**: Create, edit, and delete recipes.
+- **Category Management**: Manage categories for recipes.
+- **Image Upload**: Upload images for recipes.
+- **Responsive Design**: Mobile-friendly interface.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+To get started with the project, follow these steps:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone the repository:**
 
-### `npm run build`
+   ```bash
+   git clone https://github.com/yourusername/recipe-management.git
+   cd recipe-management
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Install dependencies for the server:**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   cd server
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Install dependencies for the client:**
 
-### `npm run eject`
+   ```bash
+   cd ../client
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. **Set up environment variables:**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   Create a `.env` file in the `server` directory and add your environment variables:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   ```plaintext
+   MONGODB_URI=your_mongodb_uri
+   GCS_BUCKET_NAME=your_gcs_bucket_name
+   JWT_SECRET=your_jwt_secret
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+5. **Run the application:**
 
-## Learn More
+   - **Server**: In the `server` directory, run `npm start`.
+   - **Client**: In the `client` directory, run `npm start`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Usage
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **Access the application**: Open your browser and go to `http://localhost:3000`.
+- **Manage recipes and categories**: Use the interface to add, edit, or delete recipes and categories.
 
-### Code Splitting
+## API Endpoints
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Categories
 
-### Analyzing the Bundle Size
+- **GET /api/categories**: Retrieve all categories.
+- **GET /api/categories/:id**: Retrieve a single category.
+- **POST /api/categories**: Create a new category.
+- **PUT /api/categories/:id**: Update a category.
+- **DELETE /api/categories/:id**: Delete a category.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Recipes
 
-### Making a Progressive Web App
+- **GET /api/recipes**: Retrieve all recipes.
+- **GET /api/recipes/:id**: Retrieve a single recipe.
+- **POST /api/recipes**: Create a new recipe.
+- **PUT /api/recipes/:id**: Update a recipe.
+- **DELETE /api/recipes/:id**: Delete a recipe.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Code References
 
-### Advanced Configuration
+### Server
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **Categories Route**: Handles CRUD operations for categories.
 
-### Deployment
+  ```javascript:server/routes/categories.js
+  startLine: 1
+  endLine: 110
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **Recipes Route**: Handles CRUD operations for recipes.
+  ```javascript:server/routes/recipes.js
+  startLine: 8
+  endLine: 175
+  ```
 
-### `npm run build` fails to minify
+### Client
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Edit Recipe Component**: Component for editing recipes.
+
+  ```javascript:client/src/components/EditRecipe.js
+  startLine: 1
+  endLine: 50
+  ```
+
+- **CSS Styles**: Styles for various components.
+  ```css:client/src/App.css
+  startLine: 721
+  endLine: 936
+  ```
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request for any improvements or bug fixes.
